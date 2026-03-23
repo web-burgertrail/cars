@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OurCars - Buy & Sell Cars Online</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --ink: #0d0d14;
+  --ink2: #3b3b4f;
+  --ink3: #7c7c92;
+  --surface: #ffffff;
+  --surface2: #f6f5fb;
+  --surface3: #edeaf8;
+  --border: rgba(100,90,180,0.12);
+  --border2: rgba(100,90,180,0.22);
+  --accent: #5b3ff8;
+  --accent2: #7c5ef9;
+  --accent3: #3d22d4;
+  --teal: #00bfa5;
+  --gold: #f59e0b;
+  --red: #ef4444;
+  --green: #10b981;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 4px 24px rgba(91,63,248,0.08);
+  --shadow-lg: 0 12px 48px rgba(91,63,248,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--surface);font-size:15px;line-height:1.6;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Sora',sans-serif;line-height:1.2}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+input,select,textarea{font-family:inherit;font-size:inherit}
+img{max-width:100%;height:auto;display:block}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--surface2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ---- PAGE TRANSITIONS ---- */
+.page{display:none;min-height:100vh}
+.page.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ---- NAVBAR ---- */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);transition:all .3s}
+.navbar.scrolled{box-shadow:0 2px 20px rgba(91,63,248,0.08)}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;gap:20px}
+.nav-logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.nav-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center}
+.nav-logo-icon svg{width:20px;height:20px;fill:white}
+.nav-logo-text{font-family:'Sora',sans-serif;font-weight:700;font-size:18px;color:var(--ink)}
+.nav-logo-text span{color:var(--accent)}
+.nav-location{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border2);border-radius:20px;font-size:13px;color:var(--ink2);cursor:pointer;flex-shrink:0;transition:all .2s}
+.nav-location:hover{border-color:var(--accent);color:var(--accent)}
+.nav-location svg{width:14px;height:14px;stroke:currentColor;fill:none}
+.nav-search{flex:1;max-width:340px;position:relative}
+.nav-search input{width:100%;padding:9px 16px 9px 40px;border:1.5px solid var(--border2);border-radius:24px;font-size:14px;background:var(--surface2);outline:none;transition:all .2s}
+.nav-search input:focus{border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 3px rgba(91,63,248,0.08)}
+.nav-search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--ink3);fill:none}
+.nav-links{display:flex;align-items:center;gap:4px;margin-left:auto}
+.nav-link{padding:7px 14px;border-radius:8px;font-size:14px;font-weight:500;color:var(--ink2);transition:all .2s;cursor:pointer}
+.nav-link:hover{background:var(--surface3);color:var(--accent)}
+.nav-link.active{color:var(--accent);background:rgba(91,63,248,0.06)}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.nav-icon-btn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;transition:all .2s;cursor:pointer;position:relative}
+.nav-icon-btn:hover{background:var(--surface3)}
+.nav-icon-btn svg{width:20px;height:20px;stroke:var(--ink2);fill:none}
+.nav-icon-btn.wishlist-btn svg.filled{display:none}
+.nav-icon-btn.wishlist-btn.has-items svg:first-child{display:none}
+.nav-icon-btn.wishlist-btn.has-items svg.filled{display:block;stroke:var(--red);fill:var(--red)}
+.wishlist-badge{position:absolute;top:5px;right:5px;width:16px;height:16px;background:var(--red);border-radius:50%;font-size:9px;font-weight:700;color:white;display:flex;align-items:center;justify-content:center;display:none}
+.nav-phone{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--accent);color:white;border-radius:24px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;flex-shrink:0}
+.nav-phone:hover{background:var(--accent3);transform:translateY(-1px)}
+.nav-phone svg{width:14px;height:14px;stroke:white;fill:none}
+
+/* ---- BUTTONS ---- */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .25s;border:none;font-family:'DM Sans',sans-serif}
+.btn-primary{background:var(--accent);color:white}
+.btn-primary:hover{background:var(--accent3);transform:translateY(-2px);box-shadow:0 8px 24px rgba(91,63,248,0.3)}
+.btn-secondary{background:white;color:var(--accent);border:2px solid var(--accent)}
+.btn-secondary:hover{background:rgba(91,63,248,0.05);transform:translateY(-2px)}
+.btn-outline{background:transparent;color:white;border:2px solid rgba(255,255,255,0.5)}
+.btn-outline:hover{background:rgba(255,255,255,0.1);border-color:white}
+.btn-teal{background:var(--teal);color:white}
+.btn-teal:hover{background:#00a390;transform:translateY(-2px)}
+.btn-lg{padding:15px 32px;font-size:16px;border-radius:14px}
+.btn-sm{padding:8px 16px;font-size:13px;border-radius:8px}
+.btn svg{width:18px;height:18px;stroke:currentColor;fill:none}
+
+/* ---- BADGES ---- */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.badge-assured{background:rgba(0,191,165,0.1);color:var(--teal)}
+.badge-premium{background:rgba(245,158,11,0.1);color:var(--gold)}
+.badge-budget{background:rgba(91,63,248,0.1);color:var(--accent)}
+.badge-new{background:rgba(16,185,129,0.1);color:var(--green)}
+.badge-svg{width:12px;height:12px;stroke:currentColor;fill:none}
+
+/* ===================== HOME PAGE ===================== */
+/* HERO */
+.hero{min-height:calc(100vh - 68px);margin-top:68px;display:grid;grid-template-columns:1fr 1fr}
+.hero-half{position:relative;overflow:hidden;min-height:540px}
+.hero-half img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.hero-half-buy img{filter:brightness(0.45)}
+.hero-half-sell img{filter:brightness(0.35)}
+.hero-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px;z-index:2}
+.hero-label{font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:16px}
+.hero-title{font-family:'Sora',sans-serif;font-size:clamp(28px,4vw,52px);font-weight:800;color:white;line-height:1.15;margin-bottom:24px}
+.hero-title span{color:#c4b5fd}
+.hero-divider{position:absolute;top:0;bottom:0;left:50%;width:2px;background:rgba(255,255,255,0.1);z-index:10;display:flex;align-items:center;justify-content:center}
+.hero-divider-badge{background:white;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:11px;font-weight:700;color:var(--accent);z-index:11;box-shadow:0 4px 16px rgba(0,0,0,0.2)}
+
+/* ASSURED SECTION */
+.assured{padding:80px 0;background:var(--surface)}
+.section-inner{max-width:1280px;margin:0 auto;padding:0 32px}
+.section-tag{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(91,63,248,0.08);border-radius:20px;font-size:13px;font-weight:600;color:var(--accent);margin-bottom:16px}
+.section-tag svg{width:14px;height:14px;stroke:var(--accent);fill:none}
+.section-title{font-size:clamp(26px,3.5vw,42px);font-weight:800;color:var(--ink);margin-bottom:12px}
+.section-sub{font-size:16px;color:var(--ink3);max-width:560px;line-height:1.7}
+.assured-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:48px}
+.assured-card{background:var(--surface2);border-radius:var(--radius);padding:28px 24px;border:1px solid var(--border);transition:all .3s;position:relative;overflow:hidden}
+.assured-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:0;transition:.3s}
+.assured-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--accent)}
+.assured-card:hover::before{opacity:1}
+.assured-icon{width:52px;height:52px;background:rgba(91,63,248,0.1);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.assured-icon svg{width:26px;height:26px;stroke:var(--accent);fill:none}
+.assured-card h3{font-size:17px;font-weight:700;margin-bottom:8px}
+.assured-card p{font-size:14px;color:var(--ink3);line-height:1.6}
+
+/* EXPLORE MORE */
+.explore{padding:70px 0;background:var(--surface2)}
+.explore-scroll{display:flex;gap:16px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.explore-scroll::-webkit-scrollbar{display:none}
+.explore-card{flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;min-width:220px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .3s}
+.explore-card:hover{border-color:var(--accent);box-shadow:var(--shadow);transform:translateY(-2px)}
+.explore-card-icon{width:44px;height:44px;border-radius:12px;background:rgba(91,63,248,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.explore-card-icon svg{width:22px;height:22px;stroke:var(--accent);fill:none}
+.explore-card-text{font-size:14px;font-weight:600;color:var(--ink);line-height:1.4}
+
+/* CUSTOMERS */
+.customers{padding:80px 0;background:var(--surface)}
+.customers-header{text-align:center;margin-bottom:52px}
+.customers-count{font-size:clamp(36px,5vw,64px);font-weight:800;color:var(--accent);font-family:'Sora',sans-serif}
+.customers-label{font-size:18px;color:var(--ink3);margin-top:4px}
+.customers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+.story-card{border-radius:var(--radius);overflow:hidden;position:relative;aspect-ratio:3/4;cursor:pointer}
+.story-card img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.story-card:hover img{transform:scale(1.05)}
+.story-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,13,20,0.9) 0%,transparent 50%);display:flex;flex-direction:column;justify-content:flex-end;padding:24px}
+.story-name{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:white;margin-bottom:4px}
+.story-city{font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:10px}
+.story-text{font-size:14px;color:rgba(255,255,255,0.85);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* REVIEWS */
+.reviews{padding:80px 0;background:var(--surface2)}
+.reviews-header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:24px;margin-bottom:48px}
+.reviews-rating{display:flex;align-items:center;gap:12px}
+.reviews-score{font-family:'Sora',sans-serif;font-size:56px;font-weight:800;color:var(--ink);line-height:1}
+.reviews-stars{display:flex;flex-direction:column;gap:4px}
+.stars{display:flex;gap:3px}
+.stars svg{width:18px;height:18px;fill:var(--gold);stroke:none}
+.reviews-count{font-size:14px;color:var(--ink3)}
+.reviews-scroll{display:flex;gap:20px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.reviews-scroll::-webkit-scrollbar{display:none}
+.review-card{flex-shrink:0;width:300px;background:var(--surface);border-radius:var(--radius);padding:24px;border:1px solid var(--border)}
+.review-top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.review-avatar{width:44px;height:44px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;flex-shrink:0}
+.review-name{font-weight:600;font-size:15px}
+.review-date{font-size:12px;color:var(--ink3)}
+.review-stars{display:flex;gap:2px;margin-bottom:12px}
+.review-stars svg{width:14px;height:14px;fill:var(--gold)}
+.review-text{font-size:14px;color:var(--ink2);line-height:1.65}
+
+/* FAQ */
+.faq{padding:80px 0;background:var(--surface)}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:48px}
+.faq-item{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;font-weight:600;font-size:15px;transition:background .2s}
+.faq-q:hover{background:var(--surface2)}
+.faq-q svg{width:18px;height:18px;stroke:var(--ink3);flex-shrink:0;transition:transform .3s}
+.faq-item.open .faq-q svg{transform:rotate(45deg);stroke:var(--accent)}
+.faq-item.open .faq-q{color:var(--accent)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.faq-item.open .faq-a{max-height:200px}
+.faq-a-inner{padding:0 24px 20px;font-size:14px;color:var(--ink3);line-height:1.7;border-top:1px solid var(--border)}
+
+/* ===================== BUY PAGE ===================== */
+.buy-page{margin-top:68px;min-height:100vh;background:var(--surface2)}
+.buy-layout{display:grid;grid-template-columns:280px 1fr;max-width:1400px;margin:0 auto;padding:24px;gap:24px;align-items:start}
+
+/* FILTER SIDEBAR */
+.filter-sidebar{background:var(--surface);border-radius:var(--radius);padding:24px;border:1px solid var(--border);position:sticky;top:92px}
+.filter-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.filter-header h3{font-size:17px;font-weight:700}
+.filter-clear{font-size:13px;color:var(--accent);cursor:pointer;font-weight:600}
+.filter-section{border-top:1px solid var(--border);padding:18px 0}
+.filter-section h4{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.filter-section h4 svg{width:16px;height:16px;stroke:var(--ink3)}
+.price-slider{width:100%;-webkit-appearance:none;height:4px;background:linear-gradient(to right,var(--accent) var(--pct,50%),var(--border2) var(--pct,50%));border-radius:2px;outline:none;cursor:pointer}
+.price-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);border:3px solid white;box-shadow:0 2px 8px rgba(91,63,248,0.3);cursor:pointer}
+.price-labels{display:flex;justify-content:space-between;font-size:13px;color:var(--ink3);margin-top:8px}
+.filter-checkbox{display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 0;font-size:14px;color:var(--ink2)}
+.filter-checkbox input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
+.filter-checkbox:hover{color:var(--accent)}
+
+/* BANNER ADS */
+.buy-banners{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.buy-banner{border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .3s}
+.buy-banner:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.buy-banner-blue{background:linear-gradient(135deg,#3b82f6,#6366f1)}
+.buy-banner-green{background:linear-gradient(135deg,var(--teal),#059669)}
+.buy-banner-icon{width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.buy-banner-icon svg{width:22px;height:22px;stroke:white;fill:none}
+.buy-banner-title{font-weight:700;font-size:14px;color:white}
+.buy-banner-sub{font-size:12px;color:rgba(255,255,255,0.8)}
+
+/* SORT + RESULTS BAR */
+.buy-top-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+.results-count{font-size:14px;color:var(--ink3)}
+.results-count strong{color:var(--ink);font-weight:700}
+.sort-select{padding:8px 14px;border:1.5px solid var(--border2);border-radius:8px;font-size:14px;background:var(--surface);outline:none;cursor:pointer;color:var(--ink)}
+
+/* CAR GRID */
+.car-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.car-card{background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);transition:all .3s;cursor:pointer}
+.car-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--accent)}
+.car-img-wrap{position:relative;aspect-ratio:16/10;overflow:hidden}
+.car-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.car-card:hover .car-img-wrap img{transform:scale(1.05)}
+.car-wishlist{position:absolute;top:10px;right:10px;width:34px;height:34px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:all .2s;z-index:2}
+.car-wishlist:hover{transform:scale(1.1)}
+.car-wishlist svg{width:16px;height:16px;stroke:var(--ink3);fill:none;transition:all .2s}
+.car-wishlist.active svg{stroke:var(--red);fill:var(--red)}
+.car-tags{position:absolute;bottom:10px;left:10px;display:flex;gap:6px;flex-wrap:wrap}
+.car-body{padding:16px}
+.car-name{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.car-price{font-size:20px;font-weight:800;color:var(--ink);font-family:'Sora',sans-serif}
+.car-emi{font-size:12px;color:var(--ink3);margin-top:2px;margin-bottom:12px}
+.car-specs{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.car-spec{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--ink2)}
+.car-spec svg{width:14px;height:14px;stroke:var(--ink3);flex-shrink:0;fill:none}
+.car-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:12px}
+.car-location{font-size:12px;color:var(--ink3);display:flex;align-items:center;gap:4px}
+.car-location svg{width:12px;height:12px;stroke:var(--ink3);fill:none}
+
+/* ===================== CAR DETAIL PAGE ===================== */
+.detail-page{margin-top:68px;min-height:100vh}
+.detail-hero{background:var(--ink);padding:24px 0}
+.detail-inner{max-width:1200px;margin:0 auto;padding:0 32px}
+.gallery-main{border-radius:var(--radius);overflow:hidden;aspect-ratio:16/9;position:relative}
+.gallery-main img{width:100%;height:100%;object-fit:cover}
+.gallery-thumbs{display:flex;gap:8px;margin-top:12px}
+.gallery-thumb{width:80px;height:54px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;flex-shrink:0;opacity:.7;transition:all .2s}
+.gallery-thumb:hover,.gallery-thumb.active{opacity:1;border-color:var(--accent)}
+.gallery-thumb img{width:100%;height:100%;object-fit:cover}
+.gallery-prev,.gallery-next{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;background:rgba(0,0,0,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;transition:background .2s}
+.gallery-prev:hover,.gallery-next:hover{background:var(--accent)}
+.gallery-prev svg,.gallery-next svg{width:20px;height:20px;stroke:white;fill:none}
+.gallery-prev{left:12px}
+.gallery-next{right:12px}
+.detail-layout{display:grid;grid-template-columns:1fr 360px;gap:32px;margin:32px 0}
+.detail-left{}
+.detail-name{font-size:clamp(22px,3vw,34px);font-weight:800;color:var(--ink);margin-bottom:8px}
+.detail-badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.detail-price{font-size:36px;font-weight:800;color:var(--ink);font-family:'Sora',sans-serif}
+.detail-emi{font-size:14px;color:var(--ink3);margin-top:4px;margin-bottom:24px}
+.detail-specs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}
+.detail-spec-item{background:var(--surface2);border-radius:var(--radius-sm);padding:16px;text-align:center;border:1px solid var(--border)}
+.detail-spec-label{font-size:12px;color:var(--ink3);margin-bottom:6px}
+.detail-spec-val{font-size:16px;font-weight:700;color:var(--ink)}
+.detail-features{margin:24px 0}
+.detail-features h3{font-size:18px;font-weight:700;margin-bottom:16px}
+.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.feature-item{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink2)}
+.feature-item svg{width:16px;height:16px;stroke:var(--green);flex-shrink:0;fill:none}
+.detail-sticky{background:var(--surface);border-radius:var(--radius);padding:28px;border:1px solid var(--border);position:sticky;top:92px}
+.assured-badge-large{background:rgba(0,191,165,0.08);border:1px solid rgba(0,191,165,0.3);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.assured-badge-large svg{width:24px;height:24px;stroke:var(--teal);fill:none;flex-shrink:0}
+.assured-badge-large-text strong{font-size:14px;font-weight:700;color:var(--teal)}
+.assured-badge-large-text p{font-size:12px;color:var(--ink3)}
+
+/* ===================== SELL FLOW ===================== */
+.sell-page{margin-top:68px;min-height:100vh;background:var(--surface2);padding:40px 0}
+.sell-form-wrap{max-width:680px;margin:0 auto;padding:0 24px}
+.sell-progress{margin-bottom:40px}
+.sell-progress-bar{height:4px;background:var(--border2);border-radius:2px;margin-bottom:10px;overflow:hidden}
+.sell-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .4s ease}
+.sell-progress-text{font-size:13px;color:var(--ink3)}
+.sell-step{display:none}
+.sell-step.active{display:block;animation:fadeIn .3s ease}
+.sell-card{background:var(--surface);border-radius:var(--radius);padding:36px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.sell-step-label{font-size:13px;font-weight:600;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.sell-step-title{font-size:26px;font-weight:800;color:var(--ink);margin-bottom:8px;font-family:'Sora',sans-serif}
+.sell-step-sub{font-size:15px;color:var(--ink3);margin-bottom:32px}
+.brand-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.brand-btn{border:2px solid var(--border2);border-radius:var(--radius-sm);padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;font-size:14px;font-weight:600;color:var(--ink2);background:var(--surface)}
+.brand-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(91,63,248,0.04)}
+.brand-btn.selected{border-color:var(--accent);color:var(--accent);background:rgba(91,63,248,0.06)}
+.brand-btn img{width:40px;height:40px;object-fit:contain;margin:0 auto 8px;filter:grayscale(30%)}
+.rto-input{width:100%;padding:14px 16px;border:2px solid var(--border2);border-radius:var(--radius-sm);font-size:15px;outline:none;transition:all .2s}
+.rto-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(91,63,248,0.08)}
+.year-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.year-btn{padding:12px 8px;border:2px solid var(--border2);border-radius:var(--radius-sm);text-align:center;cursor:pointer;font-size:14px;font-weight:600;color:var(--ink2);transition:all .2s;background:var(--surface)}
+.year-btn:hover,.year-btn.selected{border-color:var(--accent);color:var(--accent);background:rgba(91,63,248,0.06)}
+.option-list{display:flex;flex-direction:column;gap:10px}
+.option-item{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border:2px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;font-size:15px;font-weight:500}
+.option-item:hover,.option-item.selected{border-color:var(--accent);background:rgba(91,63,248,0.04)}
+.option-item.selected{color:var(--accent)}
+.option-item svg{width:18px;height:18px;stroke:var(--ink3)}
+.option-item.selected svg{stroke:var(--accent)}
+.sell-nav{display:flex;align-items:center;justify-content:space-between;margin-top:28px}
+.km-display{font-size:32px;font-weight:800;color:var(--accent);font-family:'Sora',sans-serif;text-align:center;margin:16px 0}
+.otp-inputs{display:flex;gap:12px;justify-content:center;margin:24px 0}
+.otp-input{width:52px;height:60px;border:2px solid var(--border2);border-radius:var(--radius-sm);text-align:center;font-size:24px;font-weight:700;outline:none;transition:all .2s}
+.otp-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(91,63,248,0.08)}
+
+/* EVALUATION PAGE */
+.eval-page{margin-top:68px;min-height:100vh;background:var(--surface2);padding:40px 0}
+.eval-layout{max-width:1100px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.eval-summary{background:var(--surface);border-radius:var(--radius);padding:28px;border:1px solid var(--border)}
+.eval-price-msg{background:linear-gradient(135deg,rgba(91,63,248,0.08),rgba(124,94,249,0.05));border-radius:var(--radius);padding:24px;border:1px solid var(--border);margin-top:20px;text-align:center}
+.eval-price-msg h3{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.eval-price-msg p{font-size:14px;color:var(--ink3)}
+.time-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.time-slot{padding:10px 8px;border:2px solid var(--border2);border-radius:8px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--ink2)}
+.time-slot:hover,.time-slot.selected{border-color:var(--accent);color:var(--accent);background:rgba(91,63,248,0.05)}
+
+/* STATUS TRACKING */
+.status-page{margin-top:68px;min-height:100vh;background:var(--surface2);padding:40px 0}
+.status-layout{max-width:900px;margin:0 auto;padding:0 24px}
+.status-card{background:var(--surface);border-radius:var(--radius);padding:36px;border:1px solid var(--border);margin-bottom:24px}
+.track-steps{position:relative;padding-left:32px}
+.track-steps::before{content:'';position:absolute;left:11px;top:24px;bottom:24px;width:2px;background:var(--border)}
+.track-step{position:relative;margin-bottom:28px;padding-left:16px}
+.track-step-dot{position:absolute;left:-21px;top:3px;width:22px;height:22px;border-radius:50%;border:2px solid var(--border2);background:white;display:flex;align-items:center;justify-content:center;z-index:1}
+.track-step.done .track-step-dot{background:var(--accent);border-color:var(--accent)}
+.track-step.done .track-step-dot svg{width:12px;height:12px;stroke:white;fill:none}
+.track-step.active .track-step-dot{border-color:var(--accent);background:white;box-shadow:0 0 0 4px rgba(91,63,248,0.15)}
+.track-step.active .track-step-dot::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--accent);position:absolute}
+.track-step-title{font-weight:700;font-size:15px;margin-bottom:4px}
+.track-step.done .track-step-title{color:var(--accent)}
+.track-step-sub{font-size:13px;color:var(--ink3)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border-radius:var(--radius);padding:32px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;transform:translateY(20px);transition:transform .3s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.modal-header h3{font-size:20px;font-weight:700}
+.modal-close{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s}
+.modal-close:hover{background:var(--surface2)}
+.modal-close svg{width:18px;height:18px;stroke:var(--ink2);fill:none}
+.cancel-reasons{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.cancel-reason{display:flex;align-items:center;gap:12px;padding:14px 16px;border:2px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:14px;transition:all .2s}
+.cancel-reason:hover{border-color:var(--red);color:var(--red)}
+.cancel-reason.selected{border-color:var(--red);background:rgba(239,68,68,0.04);color:var(--red)}
+.cancel-reason input{accent-color:var(--red);width:16px;height:16px}
+
+/* TOAST */
+.toast-wrap{position:fixed;top:88px;right:20px;z-index:3000;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--ink);color:white;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:flex;align-items:center;gap:8px;animation:slideIn .3s ease;max-width:320px}
+.toast svg{width:16px;height:16px;stroke:var(--green);flex-shrink:0;fill:none}
+.toast.error svg{stroke:var(--red)}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideOut{to{opacity:0;transform:translateX(20px)}}
+
+/* SUCCESS PAGE */
+.success-page{margin-top:68px;min-height:100vh;background:var(--surface2);display:flex;align-items:center;justify-content:center;padding:40px}
+.success-card{background:var(--surface);border-radius:var(--radius);padding:60px 48px;text-align:center;max-width:500px;border:1px solid var(--border);box-shadow:var(--shadow-lg)}
+.success-icon{width:80px;height:80px;background:rgba(16,185,129,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px}
+.success-icon svg{width:40px;height:40px;stroke:var(--green);fill:none}
+.success-card h2{font-size:28px;font-weight:800;margin-bottom:12px}
+.success-card p{color:var(--ink3);font-size:15px;line-height:1.7;margin-bottom:32px}
+
+/* FOOTER */
+.footer{background:var(--ink);color:white;padding:60px 0 32px}
+.footer-grid{max-width:1280px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
+.footer-brand p{color:rgba(255,255,255,0.5);font-size:14px;line-height:1.7;margin:16px 0 24px}
+.footer-social{display:flex;gap:10px}
+.footer-social-icon{width:36px;height:36px;border:1px solid rgba(255,255,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.footer-social-icon:hover{background:var(--accent);border-color:var(--accent)}
+.footer-social-icon svg{width:16px;height:16px;stroke:rgba(255,255,255,0.6);fill:none}
+.footer-col h4{font-size:14px;font-weight:700;color:rgba(255,255,255,0.9);margin-bottom:16px}
+.footer-col a{display:block;font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:10px;cursor:pointer;transition:color .2s}
+.footer-col a:hover{color:white}
+.footer-bottom{max-width:1280px;margin:40px auto 0;padding:20px 32px 0;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-bottom p{font-size:13px;color:rgba(255,255,255,0.35)}
+
+/* BACK BTN */
+.back-btn{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer;margin-bottom:24px;transition:color .2s}
+.back-btn:hover{color:var(--accent)}
+.back-btn svg{width:18px;height:18px;stroke:currentColor;fill:none}
+
+/* DOCS UPLOAD */
+.doc-upload{border:2px dashed var(--border2);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all .2s}
+.doc-upload:hover{border-color:var(--accent);background:rgba(91,63,248,0.02)}
+.doc-upload svg{width:36px;height:36px;stroke:var(--ink3);fill:none;margin:0 auto 12px}
+.doc-upload p{font-size:14px;color:var(--ink3)}
+.doc-upload strong{color:var(--accent)}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .hero-divider{display:none}
+  .assured-grid{grid-template-columns:repeat(2,1fr)}
+  .customers-grid{grid-template-columns:repeat(2,1fr)}
+  .buy-layout{grid-template-columns:240px 1fr}
+  .car-grid{grid-template-columns:repeat(2,1fr)}
+  .detail-layout{grid-template-columns:1fr}
+  .eval-layout{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .nav-search,.nav-location{display:none}
+  .assured-grid{grid-template-columns:1fr 1fr}
+  .buy-layout{grid-template-columns:1fr}
+  .filter-sidebar{display:none}
+  .car-grid{grid-template-columns:repeat(2,1fr)}
+  .faq-grid{grid-template-columns:1fr}
+  .detail-specs-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr}
+  .year-grid{grid-template-columns:repeat(4,1fr)}
+  .brand-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:480px){
+  .car-grid{grid-template-columns:1fr}
+  .customers-grid{grid-template-columns:1fr}
+  .hero-title{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="cancelModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Cancel Evaluation</h3>
+      <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke-width="2"/></svg></button>
+    </div>
+    <p style="font-size:14px;color:var(--ink3);margin-bottom:20px">Please tell us why you want to cancel</p>
+    <div class="cancel-reasons" id="cancelReasons">
+      <label class="cancel-reason"><input type="radio" name="reason" value="mistake"> Scheduled by mistake</label>
+      <label class="cancel-reason"><input type="radio" name="reason" value="price"> Better price elsewhere</label>
+      <label class="cancel-reason"><input type="radio" name="reason" value="changed"> Changed my mind</label>
+      <label class="cancel-reason"><input type="radio" name="reason" value="sold"> Already sold the car</label>
+      <label class="cancel-reason"><input type="radio" name="reason" value="later"> Will come later</label>
+      <label class="cancel-reason"><input type="radio" name="reason" value="notattractive"> Price not attractive</label>
+      <label class="cancel-reason"><input type="radio" name="reason" value="inspector"> Inspector asked to cancel</label>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;background:#ef4444" onclick="confirmCancel()">Cancel Evaluation</button>
+  </div>
+</div>
+
+<!-- ==================== NAVBAR ==================== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo" onclick="navigate('home')" style="cursor:pointer">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span class="nav-logo-text">Our<span>Cars</span></span>
+    </div>
+    <div class="nav-location">
+      <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Hyderabad
+    </div>
+    <div class="nav-search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search by car model..." id="navSearch"/>
+    </div>
+    <div class="nav-links">
+      <span class="nav-link active" id="navBuyLink" onclick="navigate('buy')">Buy Car</span>
+      <span class="nav-link" id="navSellLink" onclick="navigate('sell')">Sell Car</span>
+      <span class="nav-link">More</span>
+    </div>
+    <div class="nav-actions">
+      <div class="nav-icon-btn wishlist-btn" id="wishlistBtn" onclick="navigate('wishlist')" title="Wishlist">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke-width="2"/></svg>
+        <svg class="filled" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        <span class="wishlist-badge" id="wishlistBadge">0</span>
+      </div>
+      <div class="nav-icon-btn" title="Account">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div class="nav-phone" onclick="showToast('Calling 1800-123-456...')">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.72 10.88a19.79 19.79 0 01-3.07-8.67A2 2 0 012.64 0h3a2 2 0 012 1.72c.13 1.02.36 2 .7 2.94a2 2 0 01-.45 2.11L6.91 7.77a16 16 0 006.72 6.72l.99-.99a2 2 0 012.11-.45c.94.34 1.92.57 2.94.7A2 2 0 0121.92 16z" stroke-width="2"/></svg>
+        1800-123-456
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ==================== HOME PAGE ==================== -->
+<div class="page active" id="homePage">
+
+  <!-- SPLIT HERO -->
+  <div class="hero" style="margin-top:68px">
+    <div class="hero-half hero-half-buy" style="min-height:92vh">
+      <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=1200&q=80" alt="Buy Car"/>
+      <div class="hero-overlay">
+        <span class="hero-label">For Buyers</span>
+        <h1 class="hero-title">Cars you love<br>to <span>drive home</span></h1>
+        <p style="color:rgba(255,255,255,0.75);font-size:16px;margin-bottom:28px;max-width:340px;line-height:1.7">Explore thousands of Our Assured certified pre-owned cars</p>
+        <button class="btn btn-primary btn-lg" onclick="navigate('buy')">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          Browse Cars
+        </button>
+      </div>
+    </div>
+    <div class="hero-divider"><div class="hero-divider-badge">OR</div></div>
+    <div class="hero-half hero-half-sell" style="min-height:92vh">
+      <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1200&q=80" alt="Sell Car"/>
+      <div class="hero-overlay">
+        <span class="hero-label">For Sellers</span>
+        <h1 class="hero-title">Sell your car at<br>the <span>best price</span></h1>
+        <p style="color:rgba(255,255,255,0.75);font-size:16px;margin-bottom:28px;max-width:340px;line-height:1.7">Get a free evaluation and sell to 10,000+ verified dealers</p>
+        <button class="btn btn-outline btn-lg" onclick="navigate('sell')">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          Sell My Car
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUR ASSURED BENEFITS -->
+  <section class="assured">
+    <div class="section-inner">
+      <div class="section-tag"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2"/></svg>Our Assured Benefits</div>
+      <h2 class="section-title">Every car we sell is<br>thoroughly inspected</h2>
+      <p class="section-sub">Our team of 200+ certified inspectors evaluate 200+ data points before any car wears the Our Assured badge.</p>
+      <div class="assured-grid">
+        <div class="assured-card">
+          <div class="assured-icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-width="2"/></svg></div>
+          <h3>200-Point Inspection</h3>
+          <p>Every car undergoes a rigorous 200-point inspection by our certified team before listing.</p>
+        </div>
+        <div class="assured-card">
+          <div class="assured-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke-width="2"/></svg></div>
+          <h3>1-Year Warranty</h3>
+          <p>Drive with peace of mind. Every Our Assured car comes with a comprehensive 1-year warranty.</p>
+        </div>
+        <div class="assured-card">
+          <div class="assured-icon"><svg viewBox="0 0 24 24"><path d="M3 3h18l-2 13H5L3 3zM3 3H1M8 21h8M10 21v-3m4 3v-3" stroke-width="2"/></svg></div>
+          <h3>5-Day Return</h3>
+          <p>Not satisfied? Return the car within 5 days for a full refund, no questions asked.</p>
+        </div>
+        <div class="assured-card">
+          <div class="assured-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke-width="2"/></svg></div>
+          <h3>3,000+ Dealers</h3>
+          <p>Access to a verified network of 3,000+ dealers across India for the best deals.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPLORE MORE -->
+  <section class="explore">
+    <div class="section-inner">
+      <div class="section-tag"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>Explore More</div>
+      <h2 class="section-title">Find your perfect match</h2>
+      <div class="explore-scroll" style="margin-top:32px">
+        <div class="explore-card" onclick="navigate('buy')">
+          <div class="explore-card-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke-width="2"/><circle cx="12" cy="9" r="2.5" stroke-width="2"/></svg></div>
+          <span class="explore-card-text">Used Cars in<br>Hyderabad under 3L</span>
+        </div>
+        <div class="explore-card" onclick="navigate('buy')">
+          <div class="explore-card-icon"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+          <span class="explore-card-text">Used Maruti Cars<br>in Hyderabad</span>
+        </div>
+        <div class="explore-card" onclick="navigate('buy')">
+          <div class="explore-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <span class="explore-card-text">Used Cars<br>from 2017 onwards</span>
+        </div>
+        <div class="explore-card" onclick="navigate('buy')">
+          <div class="explore-card-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke-width="2"/></svg></div>
+          <span class="explore-card-text">Budget Cars<br>under 5 Lakh</span>
+        </div>
+        <div class="explore-card" onclick="navigate('buy')">
+          <div class="explore-card-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke-width="2"/></svg></div>
+          <span class="explore-card-text">Family Cars<br>7-Seaters</span>
+        </div>
+        <div class="explore-card" onclick="navigate('buy')">
+          <div class="explore-card-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <span class="explore-card-text">Premium Cars<br>Top-Rated</span>
+        </div>
+        <div class="explore-card" onclick="navigate('buy')">
+          <div class="explore-card-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke-width="2"/></svg></div>
+          <span class="explore-card-text">Electric Vehicles<br>Go Green</span>
+        </div>
+        <div class="explore-card" onclick="navigate('buy')">
+          <div class="explore-card-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+          <span class="explore-card-text">First Car<br>Buyer Deals</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CUSTOMER STORIES -->
+  <section class="customers">
+    <div class="section-inner">
+      <div class="customers-header">
+        <div class="section-tag" style="margin:0 auto 16px"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke-width="2"/></svg>Happy Customers</div>
+        <div class="customers-count">2 Lakh+</div>
+        <div class="customers-label">Happy Customer Stories and counting</div>
+      </div>
+      <div class="customers-grid">
+        <div class="story-card">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" alt="Rahul Sharma"/>
+          <div class="story-overlay">
+            <div class="story-name">Rahul Sharma</div>
+            <div class="story-city">Hyderabad, Telangana</div>
+            <div class="story-text">Bought my first car through OurCars and the experience was seamless. The Our Assured badge gave me the confidence to proceed without hesitation. Highly recommended!</div>
+          </div>
+        </div>
+        <div class="story-card">
+          <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=600&q=80" alt="Priya Nair"/>
+          <div class="story-overlay">
+            <div class="story-name">Priya Nair</div>
+            <div class="story-city">Bengaluru, Karnataka</div>
+            <div class="story-text">Sold my old Swift in just 3 days! The evaluation team was professional and the price offered was better than any dealer I approached locally.</div>
+          </div>
+        </div>
+        <div class="story-card">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80" alt="Arjun Mehta"/>
+          <div class="story-overlay">
+            <div class="story-name">Arjun Mehta</div>
+            <div class="story-city">Mumbai, Maharashtra</div>
+            <div class="story-text">The OurDrive test drive feature was fantastic. Got to try the car at my doorstep before buying. The 1-year warranty seals the deal for me every time.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS SECTION -->
+  <section class="reviews">
+    <div class="section-inner">
+      <div class="reviews-header">
+        <div>
+          <div class="section-tag" style="margin-bottom:12px"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke-width="2"/></svg>Customer Reviews</div>
+          <h2 class="section-title">What our customers say</h2>
+        </div>
+        <div class="reviews-rating">
+          <div class="reviews-score">4.9</div>
+          <div class="reviews-stars">
+            <div class="stars">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div class="reviews-count">Based on 84,000+ reviews</div>
+          </div>
+        </div>
+      </div>
+      <div class="reviews-scroll">
+        <div class="review-card">
+          <div class="review-top">
+            <div class="review-avatar" style="background:#5b3ff8">R</div>
+            <div><div class="review-name">Rohit V.</div><div class="review-date">2 weeks ago</div></div>
+          </div>
+          <div class="review-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg></div>
+          <p class="review-text">Outstanding service from start to finish. Got my Hyundai i20 at an amazing price and the Our Assured badge gives total peace of mind. The team was responsive and helpful throughout.</p>
+        </div>
+        <div class="review-card">
+          <div class="review-top">
+            <div class="review-avatar" style="background:#00bfa5">S</div>
+            <div><div class="review-name">Sneha M.</div><div class="review-date">1 month ago</div></div>
+          </div>
+          <div class="review-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg></div>
+          <p class="review-text">Sold my car in 4 days flat. The inspector arrived on time, evaluation was fair and transparent. Money in my account within 24 hours of accepting the offer. Simply the best!</p>
+        </div>
+        <div class="review-card">
+          <div class="review-top">
+            <div class="review-avatar" style="background:#f59e0b">A</div>
+            <div><div class="review-name">Aditya K.</div><div class="review-date">3 weeks ago</div></div>
+          </div>
+          <div class="review-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg></div>
+          <p class="review-text">The OurDrive feature is a game-changer. Test drove a Maruti Baleno at my home. Bought it the same day. Incredibly smooth experience and great EMI options too.</p>
+        </div>
+        <div class="review-card">
+          <div class="review-top">
+            <div class="review-avatar" style="background:#ef4444">N</div>
+            <div><div class="review-name">Nisha P.</div><div class="review-date">2 months ago</div></div>
+          </div>
+          <div class="review-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg></div>
+          <p class="review-text">Recommended OurCars to my whole family. Already 3 of us have bought cars and every experience has been top-notch. The warranty claims process is hassle-free too.</p>
+        </div>
+        <div class="review-card">
+          <div class="review-top">
+            <div class="review-avatar" style="background:#10b981">V</div>
+            <div><div class="review-name">Vikram T.</div><div class="review-date">1 week ago</div></div>
+          </div>
+          <div class="review-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f59e0b"/></svg></div>
+          <p class="review-text">Got 15% more than the dealer price for my old sedan. The inspection was done within 24 hours of booking and the entire process was digital and transparent.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ SECTION -->
+  <section class="faq">
+    <div class="section-inner">
+      <div class="section-tag"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="2.5"/></svg>FAQs</div>
+      <h2 class="section-title">Frequently asked questions</h2>
+      <div class="faq-grid" id="faqGrid">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">What is Our Assured? <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          <div class="faq-a"><div class="faq-a-inner">Our Assured is our quality certification program where every car is inspected at 200+ checkpoints, comes with a 1-year warranty, and is eligible for our 5-day return policy. Look for the teal badge on listings.</div></div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">How do I book a test drive? <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          <div class="faq-a"><div class="faq-a-inner">Click "Book Test Drive" on any car listing page. OurDrive delivers the car to your chosen location within a 2-hour window for a free test drive experience.</div></div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">How long does car evaluation take? <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          <div class="faq-a"><div class="faq-a-inner">Our certified inspectors typically complete the evaluation in 45–60 minutes. You'll receive a detailed report and best-price offer within 2 hours of the evaluation.</div></div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Can I get a loan to buy a car? <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          <div class="faq-a"><div class="faq-a-inner">Yes! We partner with 20+ banks and NBFCs to offer competitive auto loans starting from 8.5% per annum. EMI starts as low as 5,999/month for select cars.</div></div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">What documents do I need to sell? <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          <div class="faq-a"><div class="faq-a-inner">You'll need RC (Registration Certificate), insurance papers, your Aadhaar/PAN, and bank account details for payment. Our team will guide you through the process step by step.</div></div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">How fast will I receive payment? <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          <div class="faq-a"><div class="faq-a-inner">Once you accept our offer and documents are verified, payment is transferred directly to your bank account within 24–48 hours. We guarantee the fastest payout in the industry.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo" style="margin-bottom:12px">
+          <div class="nav-logo-icon"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:white"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/></svg></div>
+          <span class="nav-logo-text" style="color:white">Our<span style="color:#a78bfa">Cars</span></span>
+        </div>
+        <p>India's most trusted platform to buy and sell pre-owned cars. Our Assured quality. OurDrive convenience.</p>
+        <div class="footer-social">
+          <div class="footer-social-icon"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg></div>
+          <div class="footer-social-icon"><svg viewBox="0 0 24 24"><path d="M21 2H3v16l4-4h14V2z"/></svg></div>
+          <div class="footer-social-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke-width="2.5"/></svg></div>
+          <div class="footer-social-icon"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Buy a Car</h4>
+        <a onclick="navigate('buy')">Browse All Cars</a>
+        <a>Cars under 3 Lakh</a>
+        <a>SUVs</a>
+        <a>Hatchbacks</a>
+        <a>Sedans</a>
+        <a>Electric Cars</a>
+      </div>
+      <div class="footer-col">
+        <h4>Sell a Car</h4>
+        <a onclick="navigate('sell')">Get Best Price</a>
+        <a onclick="navigate('evaluation')">Book Evaluation</a>
+        <a onclick="navigate('status')">Track Status</a>
+        <a>Exchange Offer</a>
+        <a>RC Transfer</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a>About OurCars</a>
+        <a>Careers</a>
+        <a>Press</a>
+        <a>Blog</a>
+        <a>Contact Us</a>
+        <a>Privacy Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>2024 OurCars Technologies Pvt. Ltd. All rights reserved.</p>
+      <p>GSTIN: 36AABCX1234X1Z5 | CIN: U74999TG2020PTC142134</p>
+    </div>
+  </footer>
+</div>
+
+<!-- ==================== BUY PAGE ==================== -->
+<div class="page" id="buyPage">
+  <div class="buy-page">
+    <div class="buy-layout">
+      <!-- FILTER SIDEBAR -->
+      <aside class="filter-sidebar">
+        <div class="filter-header">
+          <h3>Filters</h3>
+          <span class="filter-clear" onclick="clearFilters()">Clear All</span>
+        </div>
+        
+        <div class="filter-section">
+          <h4>Budget <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></h4>
+          <input type="range" class="price-slider" id="priceSlider" min="100000" max="3000000" value="1500000" step="50000" oninput="updatePriceFilter(this.value)"/>
+          <div class="price-labels">
+            <span>1 Lakh</span>
+            <span id="priceVal">15 Lakh</span>
+          </div>
+        </div>
+        
+        <div class="filter-section">
+          <h4>Brands <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></h4>
+          <label class="filter-checkbox"><input type="checkbox" id="f-maruti" onchange="filterCars()"> Maruti Suzuki</label>
+          <label class="filter-checkbox"><input type="checkbox" id="f-hyundai" onchange="filterCars()"> Hyundai</label>
+          <label class="filter-checkbox"><input type="checkbox" id="f-honda" onchange="filterCars()"> Honda</label>
+          <label class="filter-checkbox"><input type="checkbox" id="f-tata" onchange="filterCars()"> Tata</label>
+          <label class="filter-checkbox"><input type="checkbox" id="f-toyota" onchange="filterCars()"> Toyota</label>
+          <label class="filter-checkbox"><input type="checkbox" id="f-mahindra" onchange="filterCars()"> Mahindra</label>
+        </div>
+        
+        <div class="filter-section">
+          <h4>Year <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></h4>
+          <label class="filter-checkbox"><input type="checkbox" id="f-2021" onchange="filterCars()"> 2021-2024</label>
+          <label class="filter-checkbox"><input type="checkbox" id="f-2018" onchange="filterCars()"> 2018-2020</label>
+          <label class="filter-checkbox"><input type="checkbox" id="f-2015" onchange="filterCars()"> 2015-2017</label>
+        </div>
+        
+        <div class="filter-section">
+          <h4>Fuel Type <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></h4>
+          <label class="filter-checkbox"><input type="checkbox" id="f-petrol" onchange="filterCars()"> Petrol</label>
+          <label class="filter-checkbox"><input type="checkbox" id="f-diesel" onchange="filterCars()"> Diesel</label>
+          <label class="filter-checkbox"><input type="checkbox" id="f-cng" onchange="filterCars()"> CNG</label>
+          <label class="filter-checkbox"><input type="checkbox" id="f-electric" onchange="filterCars()"> Electric</label>
+        </div>
+        
+        <div class="filter-section">
+          <h4>Transmission <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></h4>
+          <label class="filter-checkbox"><input type="checkbox" id="f-auto" onchange="filterCars()"> Automatic</label>
+          <label class="filter-checkbox"><input type="checkbox" id="f-manual" onchange="filterCars()"> Manual</label>
+        </div>
+        
+        <div class="filter-section">
+          <h4>Ownership <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></h4>
+          <label class="filter-checkbox"><input type="checkbox" id="f-first" onchange="filterCars()"> 1st Owner</label>
+          <label class="filter-checkbox"><input type="checkbox" id="f-second" onchange="filterCars()"> 2nd Owner</label>
+        </div>
+        
+        <div class="filter-section">
+          <h4>KM Driven <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></h4>
+          <label class="filter-checkbox"><input type="checkbox" id="f-km30" onchange="filterCars()"> Under 30,000 km</label>
+          <label class="filter-checkbox"><input type="checkbox" id="f-km60" onchange="filterCars()"> 30k–60k km</label>
+          <label class="filter-checkbox"><input type="checkbox" id="f-km100" onchange="filterCars()"> 60k–1 lakh km</label>
+        </div>
+
+        <!-- EXCHANGE BONUS -->
+        <div style="margin-top:20px;background:linear-gradient(135deg,rgba(91,63,248,0.08),rgba(0,191,165,0.08));border-radius:var(--radius);padding:16px;border:1px solid var(--border)">
+          <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px">Exchange Bonus</div>
+          <div style="font-size:20px;font-weight:800;color:var(--accent);font-family:'Sora',sans-serif">up to 20,000</div>
+          <div style="font-size:12px;color:var(--ink3);margin-bottom:12px">Extra on exchange</div>
+          <button class="btn btn-primary btn-sm" onclick="navigate('sell')" style="width:100%;justify-content:center">Select a Car</button>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <div>
+        <!-- BANNER ADS -->
+        <div class="buy-banners">
+          <div class="buy-banner buy-banner-blue">
+            <div class="buy-banner-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg></div>
+            <div><div class="buy-banner-title">Get car finance in 10 mins</div><div class="buy-banner-sub">Rates from 8.5% p.a. via 20+ lenders</div></div>
+          </div>
+          <div class="buy-banner buy-banner-green">
+            <div class="buy-banner-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div><div class="buy-banner-title">1-Year Warranty Included</div><div class="buy-banner-sub">On all Our Assured certified cars</div></div>
+          </div>
+        </div>
+
+        <div class="buy-top-bar">
+          <div class="results-count"><strong id="resultsCount">24</strong> cars found in Hyderabad</div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <label style="font-size:14px;color:var(--ink3)">Sort by</label>
+            <select class="sort-select" id="sortSelect" onchange="sortCars(this.value)">
+              <option value="relevance">Relevance</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="year-desc">Newest First</option>
+              <option value="km-asc">KM: Low to High</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="car-grid" id="carGrid"></div>
+        
+        <!-- PAGINATION -->
+        <div style="display:flex;justify-content:center;gap:8px;margin-top:32px;padding-bottom:40px">
+          <button class="btn btn-secondary btn-sm" style="min-width:40px;justify-content:center" onclick="showToast('Previous page')">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--accent);fill:none"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="btn btn-primary btn-sm" style="min-width:40px;justify-content:center">1</button>
+          <button class="btn btn-secondary btn-sm" style="min-width:40px;justify-content:center" onclick="showToast('Going to page 2')">2</button>
+          <button class="btn btn-secondary btn-sm" style="min-width:40px;justify-content:center" onclick="showToast('Going to page 3')">3</button>
+          <button class="btn btn-secondary btn-sm" style="min-width:40px;justify-content:center" onclick="showToast('Next page')">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--accent);fill:none"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CAR DETAIL PAGE ==================== -->
+<div class="page" id="detailPage">
+  <div class="detail-page">
+    <div class="detail-hero">
+      <div class="detail-inner">
+        <span class="back-btn" onclick="navigate('buy')" style="color:rgba(255,255,255,0.7)">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back to listings
+        </span>
+        <div style="position:relative">
+          <div class="gallery-main" id="galleryMain">
+            <img id="mainGalleryImg" src="" alt="Car"/>
+            <button class="gallery-prev" onclick="galleryNav(-1)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6" stroke-width="2.5"/></svg></button>
+            <button class="gallery-next" onclick="galleryNav(1)"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" stroke-width="2.5"/></svg></button>
+          </div>
+          <div class="gallery-thumbs" id="galleryThumbs"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface2);padding:40px 0">
+      <div class="detail-inner">
+        <div class="detail-layout">
+          <div class="detail-left">
+            <h1 class="detail-name" id="detailName">2020 Hyundai i20</h1>
+            <div class="detail-badge-row" id="detailBadges"></div>
+            <div class="detail-price" id="detailPrice">6,75,000</div>
+            <div class="detail-emi" id="detailEmi">EMI from 12,450/month</div>
+
+            <div class="detail-specs-grid" id="detailSpecsGrid"></div>
+
+            <div class="detail-features">
+              <h3>Key Features</h3>
+              <div class="features-grid" id="detailFeatures"></div>
+            </div>
+          </div>
+
+          <div class="detail-sticky">
+            <div class="assured-badge-large">
+              <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2"/></svg>
+              <div class="assured-badge-large-text"><strong>Our Assured Certified</strong><p>200-point inspection. 1-yr warranty.</p></div>
+            </div>
+            <div style="margin-bottom:20px">
+              <div style="font-size:13px;color:var(--ink3);margin-bottom:4px">Price</div>
+              <div style="font-size:28px;font-weight:800;font-family:'Sora',sans-serif" id="stickyPrice">6,75,000</div>
+              <div style="font-size:13px;color:var(--ink3)" id="stickyEmi">EMI from 12,450/month</div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:12px" onclick="navigate('evaluation')">
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              Book Test Drive
+            </button>
+            <button class="btn btn-secondary" style="width:100%;justify-content:center;margin-bottom:12px" onclick="toggleWishlistDetail()">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke-width="2"/></svg>
+              Add to Wishlist
+            </button>
+            <button class="btn btn-outline" style="width:100%;justify-content:center;background:var(--surface2);color:var(--ink2);border-color:var(--border2)" onclick="showToast('Calling dealer...')">
+              <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.72 10.88a19.79 19.79 0 01-3.07-8.67A2 2 0 012.64 0h3a2 2 0 012 1.72c.13 1.02.36 2 .7 2.94a2 2 0 01-.45 2.11L6.91 7.77a16 16 0 006.72 6.72l.99-.99a2 2 0 012.11-.45c.94.34 1.92.57 2.94.7A2 2 0 0121.92 16z" stroke-width="2"/></svg>
+              Call Dealer
+            </button>
+          </div>
+        </div>
+
+        <!-- SIMILAR CARS -->
+        <div style="margin-top:40px">
+          <h2 style="font-size:24px;font-weight:800;margin-bottom:24px">Similar Cars</h2>
+          <div class="car-grid" id="similarCarsGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SELL PAGE (Multi-Step Form) ==================== -->
+<div class="page" id="sellPage">
+  <div class="sell-page">
+    <div class="sell-form-wrap">
+      <div class="sell-progress">
+        <div class="sell-progress-bar"><div class="sell-progress-fill" id="sellProgressFill" style="width:11%"></div></div>
+        <div class="sell-progress-text" id="sellProgressText">Step 1 of 9</div>
+      </div>
+
+      <!-- STEP 1: BRAND -->
+      <div class="sell-step active" id="step1">
+        <div class="sell-card">
+          <div class="sell-step-label">Step 1</div>
+          <div class="sell-step-title">Select your car brand</div>
+          <div class="sell-step-sub">Which brand is your car?</div>
+          <div class="brand-grid">
+            <div class="brand-btn" onclick="selectBrand(this,'Maruti')">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Maruti_Suzuki_Logo.svg/200px-Maruti_Suzuki_Logo.svg.png" alt="Maruti" onerror="this.style.display='none'"/>
+              Maruti
+            </div>
+            <div class="brand-btn" onclick="selectBrand(this,'Hyundai')">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Hyundai_Motor_Company_logo.svg/200px-Hyundai_Motor_Company_logo.svg.png" alt="Hyundai" onerror="this.style.display='none'"/>
+              Hyundai
+            </div>
+            <div class="brand-btn" onclick="selectBrand(this,'Honda')">Honda</div>
+            <div class="brand-btn" onclick="selectBrand(this,'Tata')">Tata</div>
+            <div class="brand-btn" onclick="selectBrand(this,'Toyota')">Toyota</div>
+            <div class="brand-btn" onclick="selectBrand(this,'Mahindra')">Mahindra</div>
+            <div class="brand-btn" onclick="selectBrand(this,'Renault')">Renault</div>
+            <div class="brand-btn" onclick="selectBrand(this,'Kia')">Kia</div>
+            <div class="brand-btn" onclick="selectBrand(this,'MG')">MG</div>
+            <div class="brand-btn" onclick="selectBrand(this,'Ford')">Ford</div>
+            <div class="brand-btn" onclick="selectBrand(this,'Nissan')">Nissan</div>
+            <div class="brand-btn" onclick="selectBrand(this,'Other')">Other</div>
+          </div>
+          <div class="sell-nav"><div></div><button class="btn btn-primary" onclick="goStep(2)">Next <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
+        </div>
+      </div>
+
+      <!-- STEP 2: RTO LOCATION -->
+      <div class="sell-step" id="step2">
+        <div class="sell-card">
+          <div class="sell-step-label">Step 2</div>
+          <div class="sell-step-title">Registration location</div>
+          <div class="sell-step-sub">Enter your car's RTO code (e.g. TS 09)</div>
+          <input class="rto-input" id="rtoInput" placeholder="e.g. TS 09, MH 01, KA 01..." maxlength="10"/>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+            <span style="padding:6px 14px;background:var(--surface2);border-radius:20px;font-size:13px;cursor:pointer;border:1px solid var(--border)" onclick="document.getElementById('rtoInput').value='TS 09'">TS 09 - Hyderabad</span>
+            <span style="padding:6px 14px;background:var(--surface2);border-radius:20px;font-size:13px;cursor:pointer;border:1px solid var(--border)" onclick="document.getElementById('rtoInput').value='MH 01'">MH 01 - Mumbai</span>
+            <span style="padding:6px 14px;background:var(--surface2);border-radius:20px;font-size:13px;cursor:pointer;border:1px solid var(--border)" onclick="document.getElementById('rtoInput').value='KA 01'">KA 01 - Bengaluru</span>
+            <span style="padding:6px 14px;background:var(--surface2);border-radius:20px;font-size:13px;cursor:pointer;border:1px solid var(--border)" onclick="document.getElementById('rtoInput').value='DL 01'">DL 01 - Delhi</span>
+          </div>
+          <div class="sell-nav"><button class="btn btn-secondary" onclick="goStep(1)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button><button class="btn btn-primary" onclick="goStep(3)">Next <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
+        </div>
+      </div>
+
+      <!-- STEP 3: YEAR -->
+      <div class="sell-step" id="step3">
+        <div class="sell-card">
+          <div class="sell-step-label">Step 3</div>
+          <div class="sell-step-title">What year was it made?</div>
+          <div class="sell-step-sub">Select the manufacturing year</div>
+          <div class="year-grid" id="yearGrid"></div>
+          <div class="sell-nav"><button class="btn btn-secondary" onclick="goStep(2)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button><button class="btn btn-primary" onclick="goStep(4)">Next <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
+        </div>
+      </div>
+
+      <!-- STEP 4: MODEL -->
+      <div class="sell-step" id="step4">
+        <div class="sell-card">
+          <div class="sell-step-label">Step 4</div>
+          <div class="sell-step-title">Which model?</div>
+          <div class="sell-step-sub">Select your car model</div>
+          <div class="option-list" id="modelList"></div>
+          <div class="sell-nav"><button class="btn btn-secondary" onclick="goStep(3)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button><button class="btn btn-primary" onclick="goStep(5)">Next <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
+        </div>
+      </div>
+
+      <!-- STEP 5: VARIANT -->
+      <div class="sell-step" id="step5">
+        <div class="sell-card">
+          <div class="sell-step-label">Step 5</div>
+          <div class="sell-step-title">Select the variant</div>
+          <div class="sell-step-sub">Fuel type, transmission and variant</div>
+          <div style="margin-bottom:20px">
+            <div style="font-size:14px;font-weight:600;margin-bottom:10px;color:var(--ink2)">Fuel Type</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="brand-btn" style="min-width:80px" onclick="toggleVariant(this,'Petrol')">Petrol</button>
+              <button class="brand-btn" style="min-width:80px" onclick="toggleVariant(this,'Diesel')">Diesel</button>
+              <button class="brand-btn" style="min-width:80px" onclick="toggleVariant(this,'CNG')">CNG</button>
+              <button class="brand-btn" style="min-width:80px" onclick="toggleVariant(this,'Electric')">Electric</button>
+            </div>
+          </div>
+          <div style="margin-bottom:20px">
+            <div style="font-size:14px;font-weight:600;margin-bottom:10px;color:var(--ink2)">Transmission</div>
+            <div style="display:flex;gap:8px">
+              <button class="brand-btn" style="min-width:120px" onclick="toggleVariant(this,'Manual')">Manual</button>
+              <button class="brand-btn" style="min-width:120px" onclick="toggleVariant(this,'Automatic')">Automatic</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:14px;font-weight:600;margin-bottom:10px;color:var(--ink2)">Variant</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="brand-btn" style="min-width:90px" onclick="toggleVariant(this,'LXi')">LXi</button>
+              <button class="brand-btn" style="min-width:90px" onclick="toggleVariant(this,'VXi')">VXi</button>
+              <button class="brand-btn" style="min-width:90px" onclick="toggleVariant(this,'ZXi')">ZXi</button>
+              <button class="brand-btn" style="min-width:90px" onclick="toggleVariant(this,'Alpha')">Alpha</button>
+              <button class="brand-btn" style="min-width:90px" onclick="toggleVariant(this,'Magna')">Magna</button>
+            </div>
+          </div>
+          <div class="sell-nav"><button class="btn btn-secondary" onclick="goStep(4)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button><button class="btn btn-primary" onclick="goStep(6)">Next <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
+        </div>
+      </div>
+
+      <!-- STEP 6: OWNERSHIP -->
+      <div class="sell-step" id="step6">
+        <div class="sell-card">
+          <div class="sell-step-label">Step 6</div>
+          <div class="sell-step-title">How many owners?</div>
+          <div class="sell-step-sub">Select the ownership history</div>
+          <div class="option-list">
+            <div class="option-item" onclick="selectOption(this)">1st Owner <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="option-item" onclick="selectOption(this)">2nd Owner <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="option-item" onclick="selectOption(this)">3rd Owner <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="option-item" onclick="selectOption(this)">4th Owner or more <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="sell-nav"><button class="btn btn-secondary" onclick="goStep(5)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button><button class="btn btn-primary" onclick="goStep(7)">Next <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
+        </div>
+      </div>
+
+      <!-- STEP 7: KM DRIVEN -->
+      <div class="sell-step" id="step7">
+        <div class="sell-card">
+          <div class="sell-step-label">Step 7</div>
+          <div class="sell-step-title">KM driven so far</div>
+          <div class="sell-step-sub">Drag to set the approximate distance</div>
+          <div class="km-display" id="kmDisplay">45,000 km</div>
+          <input type="range" class="price-slider" min="0" max="300000" value="45000" step="1000" oninput="updateKm(this.value)" style="width:100%"/>
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--ink3);margin-top:8px"><span>0 km</span><span>3,00,000 km</span></div>
+          <div class="sell-nav"><button class="btn btn-secondary" onclick="goStep(6)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button><button class="btn btn-primary" onclick="goStep(8)">Next <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
+        </div>
+      </div>
+
+      <!-- STEP 8: SELLING TIMELINE -->
+      <div class="sell-step" id="step8">
+        <div class="sell-card">
+          <div class="sell-step-label">Step 8</div>
+          <div class="sell-step-title">When do you plan to sell?</div>
+          <div class="sell-step-sub">This helps us prioritize your evaluation</div>
+          <div class="option-list">
+            <div class="option-item" onclick="selectOption(this,'timeline')">Urgent - Within a week <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="option-item" onclick="selectOption(this,'timeline')">This month <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="option-item" onclick="selectOption(this,'timeline')">Next 3 months <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="option-item" onclick="selectOption(this,'timeline')">Just exploring options <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="sell-nav"><button class="btn btn-secondary" onclick="goStep(7)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button><button class="btn btn-primary" onclick="goStep(9)">Next <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
+        </div>
+      </div>
+
+      <!-- STEP 9: MOBILE + OTP -->
+      <div class="sell-step" id="step9">
+        <div class="sell-card">
+          <div class="sell-step-label">Step 9</div>
+          <div class="sell-step-title">Verify your number</div>
+          <div class="sell-step-sub">We'll send you an OTP to confirm</div>
+          <div id="mobileInput">
+            <div style="position:relative;margin-bottom:16px">
+              <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--ink2);font-weight:600">+91</span>
+              <input class="rto-input" style="padding-left:52px" placeholder="Enter mobile number" maxlength="10" id="mobileNum" type="tel"/>
+            </div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="sendOtp()">Send OTP</button>
+          </div>
+          <div id="otpInput" style="display:none">
+            <div style="text-align:center;margin-bottom:16px;font-size:14px;color:var(--ink3)">Enter the 6-digit OTP sent to <strong id="maskedNum">+91 XXXXXX0000</strong></div>
+            <div class="otp-inputs" id="otpBoxes"></div>
+            <div style="text-align:center;font-size:13px;color:var(--ink3);margin-bottom:20px">Didn't receive? <span style="color:var(--accent);cursor:pointer;font-weight:600" onclick="showToast('OTP resent!')">Resend OTP</span></div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="verifyOtp()">Verify & Continue</button>
+          </div>
+          <div class="sell-nav" style="margin-top:16px"><button class="btn btn-secondary" onclick="goStep(8)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== EVALUATION PAGE ==================== -->
+<div class="page" id="evaluationPage">
+  <div class="eval-page">
+    <div class="eval-layout">
+      <!-- CAR SUMMARY -->
+      <div>
+        <div class="eval-summary">
+          <h3 style="font-size:20px;font-weight:700;margin-bottom:16px">Your Car Summary</h3>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+            <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=200&q=70" style="width:80px;height:60px;border-radius:8px;object-fit:cover" alt="car"/>
+            <div>
+              <div style="font-weight:700;font-size:16px">2019 Maruti Suzuki Swift</div>
+              <div style="font-size:13px;color:var(--ink3)">VXi · Petrol · Manual · 1st Owner</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="background:var(--surface2);border-radius:8px;padding:12px">
+              <div style="font-size:12px;color:var(--ink3)">KM Driven</div>
+              <div style="font-weight:700;font-size:15px">45,000 km</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:8px;padding:12px">
+              <div style="font-size:12px;color:var(--ink3)">RTO</div>
+              <div style="font-weight:700;font-size:15px">TS 09 - HYD</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:8px;padding:12px">
+              <div style="font-size:12px;color:var(--ink3)">Year</div>
+              <div style="font-weight:700;font-size:15px">2019</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:8px;padding:12px">
+              <div style="font-size:12px;color:var(--ink3)">Timeline</div>
+              <div style="font-weight:700;font-size:15px">This month</div>
+            </div>
+          </div>
+          <div class="eval-price-msg">
+            <svg viewBox="0 0 24 24" style="width:36px;height:36px;stroke:var(--accent);fill:none;margin:0 auto 12px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3" stroke-width="2"/></svg>
+            <h3>Price calculation in progress</h3>
+            <p>We could not calculate the exact price yet. Book a free evaluation and our inspector will provide the best offer.</p>
+          </div>
+        </div>
+
+        <!-- DOCUMENT UPLOAD -->
+        <div style="background:var(--surface);border-radius:var(--radius);padding:24px;border:1px solid var(--border);margin-top:20px">
+          <h3 style="font-size:17px;font-weight:700;margin-bottom:16px">Upload Documents</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="doc-upload" onclick="showToast('RC upload simulated!')">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              <p><strong>Upload RC</strong><br>Registration Certificate</p>
+            </div>
+            <div class="doc-upload" onclick="showToast('Insurance upload simulated!')">
+              <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+              <p><strong>Upload Insurance</strong><br>Policy document</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOOKING FORM -->
+      <div>
+        <div style="background:var(--surface);border-radius:var(--radius);padding:28px;border:1px solid var(--border)">
+          <h3 style="font-size:20px;font-weight:700;margin-bottom:4px">Book Free Evaluation</h3>
+          <p style="font-size:14px;color:var(--ink3);margin-bottom:24px">Our inspector will come to your location</p>
+          
+          <div style="margin-bottom:16px">
+            <label style="font-size:14px;font-weight:600;display:block;margin-bottom:8px">Your Address</label>
+            <input class="rto-input" placeholder="Enter your complete address..." style="font-size:14px"/>
+          </div>
+          
+          <div style="margin-bottom:16px">
+            <label style="font-size:14px;font-weight:600;display:block;margin-bottom:8px">Preferred Date</label>
+            <input type="date" class="rto-input" style="font-size:14px"/>
+          </div>
+          
+          <div style="margin-bottom:20px">
+            <label style="font-size:14px;font-weight:600;display:block;margin-bottom:8px">Preferred Time Slot</label>
+            <div class="time-slots">
+              <div class="time-slot" onclick="selectSlot(this)">9 - 11 AM</div>
+              <div class="time-slot selected" onclick="selectSlot(this)">11 AM - 1 PM</div>
+              <div class="time-slot" onclick="selectSlot(this)">1 - 3 PM</div>
+              <div class="time-slot" onclick="selectSlot(this)">3 - 5 PM</div>
+              <div class="time-slot" onclick="selectSlot(this)">5 - 7 PM</div>
+              <div class="time-slot" onclick="selectSlot(this)">Any time</div>
+            </div>
+          </div>
+          
+          <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center" onclick="bookEvaluation()">
+            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.72 10.88a19.79 19.79 0 01-3.07-8.67A2 2 0 012.64 0h3a2 2 0 012 1.72c.13 1.02.36 2 .7 2.94a2 2 0 01-.45 2.11L6.91 7.77a16 16 0 006.72 6.72l.99-.99a2 2 0 012.11-.45c.94.34 1.92.57 2.94.7A2 2 0 0121.92 16z" stroke-width="2"/></svg>
+            Book Free Evaluation
+          </button>
+          
+          <p style="font-size:12px;text-align:center;color:var(--ink3);margin-top:16px">No charges. Certified inspector. Takes 45-60 minutes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SUCCESS PAGE ==================== -->
+<div class="page" id="successPage">
+  <div class="success-page">
+    <div class="success-card">
+      <div class="success-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" stroke-width="2.5"/></svg></div>
+      <h2>Evaluation Booked!</h2>
+      <p>Your free car evaluation has been successfully scheduled. Our certified inspector will visit you at the selected time slot.</p>
+      <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:16px;margin-bottom:28px;text-align:left">
+        <div style="display:flex;justify-content:space-between;font-size:14px;padding:6px 0;border-bottom:1px solid var(--border)">
+          <span style="color:var(--ink3)">Booking ID</span><span style="font-weight:700">#OC-2024-8472</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:14px;padding:6px 0;border-bottom:1px solid var(--border)">
+          <span style="color:var(--ink3)">Inspector</span><span style="font-weight:600">Suresh Kumar</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:14px;padding:6px 0">
+          <span style="color:var(--ink3)">Time Slot</span><span style="font-weight:600">Tomorrow, 11 AM - 1 PM</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px">
+        <button class="btn btn-primary" onclick="navigate('status')">Track Status</button>
+        <button class="btn btn-secondary" onclick="navigate('home')">Go Home</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STATUS PAGE ==================== -->
+<div class="page" id="statusPage">
+  <div class="status-page">
+    <div class="status-layout">
+      <div class="back-btn" onclick="navigate('home')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back to Home</div>
+      
+      <h1 style="font-size:28px;font-weight:800;margin-bottom:24px">Evaluation Status</h1>
+      
+      <div class="status-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:28px">
+          <div>
+            <div style="font-size:13px;color:var(--ink3);margin-bottom:4px">Booking ID</div>
+            <div style="font-size:18px;font-weight:700">#OC-2024-8472</div>
+          </div>
+          <div style="background:rgba(16,185,129,0.1);color:var(--green);padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700">Scheduled</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid var(--border)">
+          <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=200&q=70" style="width:80px;height:60px;border-radius:8px;object-fit:cover" alt="car"/>
+          <div>
+            <div style="font-weight:700;font-size:16px">2019 Maruti Suzuki Swift VXi</div>
+            <div style="font-size:13px;color:var(--ink3)">Petrol · Manual · 45,000 km · TS 09</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid var(--border)">
+          <div>
+            <div style="font-size:13px;color:var(--ink3);margin-bottom:4px">Inspector</div>
+            <div style="font-weight:600">Suresh Kumar</div>
+            <div style="font-size:13px;color:var(--ink3)">Certified Inspector</div>
+          </div>
+          <div>
+            <div style="font-size:13px;color:var(--ink3);margin-bottom:4px">Scheduled For</div>
+            <div style="font-weight:600">Tomorrow</div>
+            <div style="font-size:13px;color:var(--ink3)">11:00 AM - 1:00 PM</div>
+          </div>
+        </div>
+
+        <h3 style="font-size:17px;font-weight:700;margin-bottom:20px">Evaluation Journey</h3>
+        <div class="track-steps">
+          <div class="track-step done">
+            <div class="track-step-dot"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" stroke-width="3"/></svg></div>
+            <div class="track-step-title">Evaluation Requested</div>
+            <div class="track-step-sub">Today, 3:30 PM — Your request has been received</div>
+          </div>
+          <div class="track-step active">
+            <div class="track-step-dot"></div>
+            <div class="track-step-title">Evaluation Scheduled</div>
+            <div class="track-step-sub">Tomorrow, 11 AM — Inspector assigned and en route</div>
+          </div>
+          <div class="track-step">
+            <div class="track-step-dot"></div>
+            <div class="track-step-title">Evaluation In Progress</div>
+            <div class="track-step-sub">Inspector examines your car on-site</div>
+          </div>
+          <div class="track-step">
+            <div class="track-step-dot"></div>
+            <div class="track-step-title">Evaluation Completed</div>
+            <div class="track-step-sub">Detailed report & best-price offer delivered</div>
+          </div>
+          <div class="track-step">
+            <div class="track-step-dot"></div>
+            <div class="track-step-title">Offer Accepted</div>
+            <div class="track-step-sub">Payment transferred within 24 hours</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:28px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="showToast('Calling inspector...')">
+            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07" stroke-width="2"/></svg>
+            Call Inspector
+          </button>
+          <button class="btn btn-secondary" onclick="showToast('Opening chat...')">Message Support</button>
+          <button class="btn" style="background:rgba(239,68,68,0.08);color:var(--red);border:1px solid rgba(239,68,68,0.2)" onclick="openModal()">Cancel Evaluation</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== WISHLIST PAGE ==================== -->
+<div class="page" id="wishlistPage">
+  <div style="margin-top:68px;min-height:100vh;background:var(--surface2);padding:40px 0">
+    <div style="max-width:1200px;margin:0 auto;padding:0 32px">
+      <div class="back-btn" onclick="navigate('buy')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</div>
+      <h1 style="font-size:28px;font-weight:800;margin-bottom:8px">Your Wishlist</h1>
+      <p style="color:var(--ink3);margin-bottom:32px" id="wishlistCount">0 cars saved</p>
+      <div class="car-grid" id="wishlistGrid"></div>
+      <div id="wishlistEmpty" style="text-align:center;padding:80px 20px">
+        <svg viewBox="0 0 24 24" style="width:64px;height:64px;stroke:var(--border2);fill:none;margin:0 auto 16px"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke-width="1.5"/></svg>
+        <h3 style="font-size:20px;margin-bottom:8px;color:var(--ink2)">No saved cars yet</h3>
+        <p style="color:var(--ink3);margin-bottom:24px">Save cars you like while browsing</p>
+        <button class="btn btn-primary" onclick="navigate('buy')">Browse Cars</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== STATE =====================
+const state = {
+  currentPage: 'home',
+  wishlist: new Set(),
+  currentStep: 1,
+  selectedBrand: '',
+  selectedYear: '',
+  selectedModel: '',
+  currentCar: null,
+  currentGalleryIdx: 0,
+  priceMax: 1500000
+};
+
+// ===================== CAR DATA =====================
+const CARS = [
+  {id:1,name:'2020 Hyundai i20 Sportz',price:'6,75,000',priceNum:675000,emi:'12,450/month',km:'38,000',fuel:'Petrol',trans:'Manual',brand:'Hyundai',year:2020,location:'Hyderabad',assured:true,budget:false,premium:false,
+   imgs:['https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80','https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&q=80','https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80'],
+   features:['Sunroof','Rear Camera','Push Start','Apple CarPlay','Cruise Control','LED Headlights','Climate Control','Rain Sensor']},
+  {id:2,name:'2018 Maruti Swift ZXi',price:'4,25,000',priceNum:425000,emi:'7,800/month',km:'52,000',fuel:'Petrol',trans:'Manual',brand:'Maruti',year:2018,location:'Hyderabad',assured:true,budget:true,premium:false,
+   imgs:['https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80','https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80'],
+   features:['Rear Camera','Touchscreen','Power Windows','Central Lock','ABS','Airbags']},
+  {id:3,name:'2021 Tata Nexon EV',price:'11,90,000',priceNum:1190000,emi:'21,800/month',km:'22,000',fuel:'Electric',trans:'Automatic',brand:'Tata',year:2021,location:'Hyderabad',assured:true,budget:false,premium:true,
+   imgs:['https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&q=80','https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=800&q=80'],
+   features:['Panoramic Sunroof','360 Camera','Connected Car','Ventilated Seats','Wireless Charging','JBL Sound']},
+  {id:4,name:'2019 Honda City VX',price:'7,50,000',priceNum:750000,emi:'13,700/month',km:'44,000',fuel:'Petrol',trans:'Automatic',brand:'Honda',year:2019,location:'Secunderabad',assured:true,budget:false,premium:true,
+   imgs:['https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=80','https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800&q=80'],
+   features:['Leather Seats','Sunroof','Honda Sensing','Android Auto','Lane Watch','Cruise Control']},
+  {id:5,name:'2017 Maruti Baleno Alpha',price:'4,80,000',priceNum:480000,emi:'8,800/month',km:'65,000',fuel:'Petrol',trans:'CVT',brand:'Maruti',year:2017,location:'Hyderabad',assured:false,budget:true,premium:false,
+   imgs:['https://images.unsplash.com/photo-1542362567-b07e54358753?w=800&q=80']},
+  {id:6,name:'2022 Kia Seltos HTX',price:'13,50,000',priceNum:1350000,emi:'24,600/month',km:'15,000',fuel:'Diesel',trans:'Automatic',brand:'Kia',year:2022,location:'Hyderabad',assured:true,budget:false,premium:true,
+   imgs:['https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80','https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80'],
+   features:['Panoramic Sunroof','Bose Audio','360 Camera','ADAS','Ventilated Seats','HUD']},
+  {id:7,name:'2019 Toyota Fortuner',price:'24,50,000',priceNum:2450000,emi:'44,500/month',km:'32,000',fuel:'Diesel',trans:'Automatic',brand:'Toyota',year:2019,location:'Hyderabad',assured:true,budget:false,premium:true,
+   imgs:['https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800&q=80']},
+  {id:8,name:'2020 Mahindra Thar LX',price:'14,90,000',priceNum:1490000,emi:'27,200/month',km:'28,000',fuel:'Diesel',trans:'Manual',brand:'Mahindra',year:2020,location:'Hyderabad',assured:true,budget:false,premium:true,
+   imgs:['https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800&q=80']},
+  {id:9,name:'2018 Honda WR-V',price:'5,80,000',priceNum:580000,emi:'10,600/month',km:'55,000',fuel:'Petrol',trans:'Manual',brand:'Honda',year:2018,location:'Hyderabad',assured:false,budget:true,premium:false,
+   imgs:['https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&q=80']},
+];
+
+const MODELS_BY_BRAND = {
+  Maruti: ['Swift','Baleno','WagonR','Alto','Dzire','Ertiga','Brezza','Ignis'],
+  Hyundai: ['i20','Creta','Verna','Tucson','Venue','Grand i10','Elite i20','Aura'],
+  Honda: ['City','Amaze','WR-V','Jazz','HR-V','Elevate'],
+  Tata: ['Nexon','Harrier','Safari','Tiago','Tigor','Punch','Altroz'],
+  Toyota: ['Fortuner','Innova','Camry','Corolla','Urban Cruiser','Glanza'],
+  Mahindra: ['Thar','Scorpio','XUV300','XUV500','Bolero','KUV100'],
+  Renault: ['Kwid','Triber','Duster','Kiger'],
+  Kia: ['Seltos','Sonet','Carens','Carnival'],
+  MG: ['Hector','Gloster','ZS EV','Astor'],
+  Ford: ['EcoSport','Endeavour','Figo','Freestyle'],
+  Nissan: ['Magnite','Kicks','Sunny','Terrano'],
+  Other: ['Other model']
+};
+
+// ===================== NAVIGATION =====================
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(page+'Page').classList.add('active');
+  state.currentPage = page;
+  window.scrollTo(0,0);
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  if(page==='buy') document.getElementById('navBuyLink').classList.add('active');
+  else if(page==='sell') document.getElementById('navSellLink').classList.add('active');
+  if(page==='buy') renderCarGrid();
+  if(page==='wishlist') renderWishlist();
+}
+
+// ===================== NAVBAR SCROLL =====================
+window.addEventListener('scroll', ()=>{
+  document.getElementById('navbar').classList.toggle('scrolled', scrollY>40);
+});
+
+// ===================== TOAST =====================
+function showToast(msg, type='success'){
+  const wrap = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toast' + (type==='error' ? ' error' : '');
+  t.innerHTML = `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" stroke-width="2.5"/></svg>${msg}`;
+  wrap.appendChild(t);
+  setTimeout(()=>{t.style.animation='slideOut .3s ease forwards';setTimeout(()=>t.remove(),300)},3000);
+}
+
+// ===================== FAQ =====================
+function toggleFaq(el){
+  el.classList.toggle('open');
+}
+
+// ===================== CAR GRID RENDER =====================
+function carCardHTML(car, showRemove=false){
+  const isWishlisted = state.wishlist.has(car.id);
+  const tags = [];
+  if(car.assured) tags.push('<span class="badge badge-assured"><svg class="badge-svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Our Assured</span>');
+  if(car.premium) tags.push('<span class="badge badge-premium">Premium</span>');
+  if(car.budget) tags.push('<span class="badge badge-budget">Budget</span>');
+  return `<div class="car-card" onclick="openCar(${car.id})">
+    <div class="car-img-wrap">
+      <img src="${car.imgs[0]}" alt="${car.name}" loading="lazy"/>
+      <div class="car-wishlist ${isWishlisted?'active':''}" onclick="event.stopPropagation();toggleWishlist(${car.id},this)" title="Save">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke-width="2"/></svg>
+      </div>
+      <div class="car-tags">${tags.join('')}</div>
+    </div>
+    <div class="car-body">
+      <div class="car-name">${car.name}</div>
+      <div class="car-price">${car.price}</div>
+      <div class="car-emi">EMI from ${car.emi}</div>
+      <div class="car-specs">
+        <span class="car-spec"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${car.km} km</span>
+        <span class="car-spec"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>${car.fuel}</span>
+        <span class="car-spec"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83"/></svg>${car.trans}</span>
+      </div>
+      <div class="car-footer">
+        <span class="car-location"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>${car.location}</span>
+        ${showRemove?`<button class="btn btn-sm" style="background:rgba(239,68,68,0.08);color:var(--red);border:none;padding:4px 10px;font-size:12px" onclick="event.stopPropagation();removeWishlist(${car.id})">Remove</button>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+let filteredCars = [...CARS];
+
+function renderCarGrid(){
+  const grid = document.getElementById('carGrid');
+  grid.innerHTML = filteredCars.map(c => carCardHTML(c)).join('');
+  document.getElementById('resultsCount').textContent = filteredCars.length;
+}
+
+function filterCars(){
+  const price = state.priceMax;
+  const brands = ['maruti','hyundai','honda','tata','toyota','mahindra']
+    .filter(b => document.getElementById('f-'+b)?.checked)
+    .map(b => b.charAt(0).toUpperCase()+b.slice(1));
+  const fuels = ['petrol','diesel','cng','electric']
+    .filter(f => document.getElementById('f-'+f)?.checked)
+    .map(f => f.charAt(0).toUpperCase()+f.slice(1));
+  const trans = [
+    document.getElementById('f-auto')?.checked?'Automatic':'',
+    document.getElementById('f-manual')?.checked?'Manual':''
+  ].filter(Boolean);
+  const yrs = [
+    document.getElementById('f-2021')?.checked?[2021,2024]:[],
+    document.getElementById('f-2018')?.checked?[2018,2020]:[],
+    document.getElementById('f-2015')?.checked?[2015,2017]:[]
+  ].filter(a=>a.length);
+
+  filteredCars = CARS.filter(c => {
+    if(c.priceNum > price) return false;
+    if(brands.length && !brands.includes(c.brand)) return false;
+    if(fuels.length && !fuels.includes(c.fuel)) return false;
+    if(trans.length && !trans.includes(c.trans)) return false;
+    if(yrs.length && !yrs.some(([a,b]) => c.year>=a && c.year<=b)) return false;
+    return true;
+  });
+  renderCarGrid();
+}
+
+function sortCars(val){
+  if(val==='price-asc') filteredCars.sort((a,b)=>a.priceNum-b.priceNum);
+  else if(val==='price-desc') filteredCars.sort((a,b)=>b.priceNum-a.priceNum);
+  else if(val==='year-desc') filteredCars.sort((a,b)=>b.year-a.year);
+  else if(val==='km-asc') filteredCars.sort((a,b)=>parseInt(a.km)-parseInt(b.km));
+  else filteredCars = [...CARS];
+  renderCarGrid();
+}
+
+function clearFilters(){
+  document.querySelectorAll('.filter-checkbox input').forEach(i=>i.checked=false);
+  state.priceMax = 3000000;
+  document.getElementById('priceSlider').value = 3000000;
+  document.getElementById('priceVal').textContent = '30 Lakh';
+  filteredCars = [...CARS];
+  renderCarGrid();
+  showToast('Filters cleared');
+}
+
+function updatePriceFilter(val){
+  state.priceMax = parseInt(val);
+  const lakhs = Math.round(val/100000);
+  document.getElementById('priceVal').textContent = lakhs+' Lakh';
+  const pct = (val - 100000) / (3000000 - 100000) * 100;
+  document.getElementById('priceSlider').style.setProperty('--pct', pct+'%');
+  filterCars();
+}
+
+// ===================== WISHLIST =====================
+function toggleWishlist(id, btn){
+  if(state.wishlist.has(id)){
+    state.wishlist.delete(id);
+    btn.classList.remove('active');
+    showToast('Removed from wishlist');
+  } else {
+    state.wishlist.add(id);
+    btn.classList.add('active');
+    showToast('Saved to wishlist');
+  }
+  updateWishlistBadge();
+}
+
+function updateWishlistBadge(){
+  const n = state.wishlist.size;
+  const badge = document.getElementById('wishlistBadge');
+  const btn = document.getElementById('wishlistBtn');
+  badge.textContent = n;
+  badge.style.display = n > 0 ? 'flex' : 'none';
+  btn.classList.toggle('has-items', n > 0);
+}
+
+function toggleWishlistDetail(){
+  const id = state.currentCar?.id;
+  if(!id) return;
+  if(state.wishlist.has(id)){
+    state.wishlist.delete(id);
+    showToast('Removed from wishlist');
+  } else {
+    state.wishlist.add(id);
+    showToast('Added to wishlist');
+  }
+  updateWishlistBadge();
+}
+
+function renderWishlist(){
+  const grid = document.getElementById('wishlistGrid');
+  const empty = document.getElementById('wishlistEmpty');
+  const count = document.getElementById('wishlistCount');
+  const cars = CARS.filter(c => state.wishlist.has(c.id));
+  count.textContent = cars.length + ' car' + (cars.length!==1?'s':'') + ' saved';
+  if(cars.length === 0){
+    grid.innerHTML = '';
+    grid.style.display = 'none';
+    empty.style.display = 'block';
+  } else {
+    grid.style.display = 'grid';
+    empty.style.display = 'none';
+    grid.innerHTML = cars.map(c => carCardHTML(c, true)).join('');
+  }
+}
+
+function removeWishlist(id){
+  state.wishlist.delete(id);
+  updateWishlistBadge();
+  renderWishlist();
+  showToast('Removed from wishlist');
+}
+
+// ===================== CAR DETAIL =====================
+function openCar(id){
+  const car = CARS.find(c => c.id===id);
+  if(!car) return;
+  state.currentCar = car;
+  state.currentGalleryIdx = 0;
+  
+  document.getElementById('detailName').textContent = car.name;
+  document.getElementById('detailPrice').textContent = car.price;
+  document.getElementById('detailEmi').textContent = 'EMI from '+car.emi;
+  document.getElementById('stickyPrice').textContent = car.price;
+  document.getElementById('stickyEmi').textContent = 'EMI from '+car.emi;
+  
+  // Gallery
+  document.getElementById('mainGalleryImg').src = car.imgs[0];
+  const thumbs = document.getElementById('galleryThumbs');
+  thumbs.innerHTML = car.imgs.map((img,i) => 
+    `<div class="gallery-thumb ${i===0?'active':''}" onclick="setGalleryImg(${i})"><img src="${img}" alt="thumb"/></div>`
+  ).join('');
+  
+  // Badges
+  const badges = [];
+  if(car.assured) badges.push('<span class="badge badge-assured">Our Assured</span>');
+  if(car.premium) badges.push('<span class="badge badge-premium">Premium</span>');
+  if(car.budget) badges.push('<span class="badge badge-budget">Budget</span>');
+  document.getElementById('detailBadges').innerHTML = badges.join('');
+  
+  // Specs grid
+  const specs = [
+    {label:'KM Driven',val:car.km+' km'},
+    {label:'Fuel Type',val:car.fuel},
+    {label:'Transmission',val:car.trans},
+    {label:'Year',val:car.year},
+    {label:'Location',val:car.location},
+    {label:'Ownership',val:'1st Owner'},
+  ];
+  document.getElementById('detailSpecsGrid').innerHTML = specs.map(s=>
+    `<div class="detail-spec-item"><div class="detail-spec-label">${s.label}</div><div class="detail-spec-val">${s.val}</div></div>`
+  ).join('');
+  
+  // Features
+  const features = car.features || ['Power Windows','Central Locking','ABS','Airbags','AC','Power Steering'];
+  document.getElementById('detailFeatures').innerHTML = features.map(f=>
+    `<div class="feature-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" stroke-width="2.5"/></svg>${f}</div>`
+  ).join('');
+  
+  // Similar cars
+  const similar = CARS.filter(c => c.id!==id && (c.brand===car.brand||c.fuel===car.fuel)).slice(0,3);
+  document.getElementById('similarCarsGrid').innerHTML = similar.map(c=>carCardHTML(c)).join('');
+  
+  navigate('detail');
+}
+
+function galleryNav(dir){
+  const car = state.currentCar;
+  if(!car) return;
+  state.currentGalleryIdx = (state.currentGalleryIdx + dir + car.imgs.length) % car.imgs.length;
+  setGalleryImg(state.currentGalleryIdx);
+}
+
+function setGalleryImg(idx){
+  const car = state.currentCar;
+  document.getElementById('mainGalleryImg').src = car.imgs[idx];
+  document.querySelectorAll('.gallery-thumb').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  state.currentGalleryIdx = idx;
+}
+
+// ===================== SELL STEPS =====================
+function goStep(n){
+  document.getElementById('step'+state.currentStep).classList.remove('active');
+  state.currentStep = n;
+  document.getElementById('step'+n).classList.add('active');
+  const pct = (n-1)/8*100;
+  document.getElementById('sellProgressFill').style.width = Math.max(11,pct)+'%';
+  document.getElementById('sellProgressText').textContent = 'Step '+n+' of 9';
+  window.scrollTo(0,0);
+}
+
+function selectBrand(el, brand){
+  document.querySelectorAll('#step1 .brand-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  state.selectedBrand = brand;
+  
+  // Populate models for step 4
+  const models = MODELS_BY_BRAND[brand] || [];
+  document.getElementById('modelList').innerHTML = models.map(m=>
+    `<div class="option-item" onclick="selectOption(this,'model');state.selectedModel='${m}'">${m}<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>`
+  ).join('');
+}
+
+function selectOption(el, group=''){
+  const parent = el.parentElement;
+  parent.querySelectorAll('.option-item').forEach(i=>i.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function toggleVariant(el, val){
+  const siblings = el.parentElement.querySelectorAll('.brand-btn');
+  const wasSelected = el.classList.contains('selected');
+  siblings.forEach(b=>b.classList.remove('selected'));
+  if(!wasSelected) el.classList.add('selected');
+}
+
+function updateKm(val){
+  const n = parseInt(val);
+  const formatted = n.toLocaleString('en-IN');
+  document.getElementById('kmDisplay').textContent = formatted+' km';
+}
+
+// Year grid
+(function(){
+  const grid = document.getElementById('yearGrid');
+  if(!grid) return;
+  const curYear = new Date().getFullYear();
+  const years = Array.from({length:14},(_,i)=>curYear-1-i);
+  grid.innerHTML = years.map(y=>
+    `<div class="year-btn" onclick="selectYear(this,${y})">${y}</div>`
+  ).join('');
+})();
+
+function selectYear(el, yr){
+  document.querySelectorAll('.year-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  state.selectedYear = yr;
+}
+
+// OTP
+function sendOtp(){
+  const num = document.getElementById('mobileNum').value;
+  if(num.length < 10){ showToast('Enter a valid 10-digit number','error'); return; }
+  document.getElementById('mobileInput').style.display = 'none';
+  document.getElementById('otpInput').style.display = 'block';
+  document.getElementById('maskedNum').textContent = '+91 XXXXXX'+num.slice(-4);
+  
+  // Create OTP boxes
+  const boxes = document.getElementById('otpBoxes');
+  boxes.innerHTML = Array(6).fill(0).map((_,i)=>
+    `<input class="otp-input" maxlength="1" type="tel" id="otp${i}" oninput="otpNext(this,${i})" onkeydown="otpBack(event,${i})"/>`
+  ).join('');
+  document.getElementById('otp0').focus();
+  showToast('OTP sent! (Use: 1 2 3 4 5 6)');
+}
+
+function otpNext(el, idx){
+  if(el.value && idx<5) document.getElementById('otp'+(idx+1)).focus();
+}
+function otpBack(e, idx){
+  if(e.key==='Backspace' && !e.target.value && idx>0) document.getElementById('otp'+(idx-1)).focus();
+}
+
+function verifyOtp(){
+  const otp = Array(6).fill(0).map((_,i)=>document.getElementById('otp'+i)?.value||'').join('');
+  if(otp === '123456'){
+    showToast('Number verified successfully!');
+    setTimeout(()=>navigate('evaluation'),800);
+  } else {
+    showToast('Invalid OTP. Try 123456','error');
+  }
+}
+
+// ===================== EVALUATION =====================
+function selectSlot(el){
+  document.querySelectorAll('.time-slot').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function bookEvaluation(){
+  showToast('Booking your evaluation...');
+  setTimeout(()=>navigate('success'),1000);
+}
+
+// ===================== MODAL =====================
+function openModal(){ document.getElementById('cancelModal').classList.add('open'); }
+function closeModal(){ document.getElementById('cancelModal').classList.remove('open'); }
+function confirmCancel(){
+  const selected = document.querySelector('#cancelReasons input:checked');
+  if(!selected){ showToast('Please select a reason','error'); return; }
+  closeModal();
+  showToast('Evaluation cancelled. Sorry to see you go!');
+  setTimeout(()=>navigate('home'),1500);
+}
+document.getElementById('cancelModal').addEventListener('click',function(e){
+  if(e.target===this) closeModal();
+});
+
+// ===================== INIT =====================
+renderCarGrid();
+</script>
+</body>
+</html>
